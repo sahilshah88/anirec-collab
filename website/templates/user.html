@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html>
+<title>User Anime Recommendations</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/vast-engineering/jquery-popup-overlay@2/jquery.popupoverlay.min.js"></script>
+
+<script>
+function filterall() {
+  var allbtn = document.getElementById('all');
+  var tvbtn = document.getElementById('tv');
+  var scorebtn = document.getElementById('score');
+  allbtn.className = "w3-button w3-black";
+  tvbtn.className = "w3-button w3-white";
+  scorebtn.className = "w3-button w3-white";
+  
+  var rows = document.querySelectorAll('[id^="row"]');
+  for (i = 0; i < rows.length; ++i) {
+    rows[i].innerHTML = "";
+  }
+  
+  {% for i in range(40) %}
+      $('#popup{{ i|string }}').popup({
+	    pagecontainer: '#portfolio',
+	    color: '#000',
+	    transition: 'all 0.7s'
+	  });
+	  
+      var row;
+	  {% if i >= 0 and i < 4 %}
+		row = document.getElementById('row1');
+	  {% elif i >= 4 and i < 8 %}
+		row = document.getElementById('row2');
+	  {% elif i >= 8 and i < 12 %}
+		row = document.getElementById('row3');
+	  {% elif i >= 12 and i < 16 %}
+		row = document.getElementById('row4');
+	  {% elif i >= 16 and i < 20 %}
+		row = document.getElementById('row5');
+	  {% elif i >= 20 and i < 24 %}
+		row = document.getElementById('row6');
+	  {% elif i >= 24 and i < 28 %}
+		row = document.getElementById('row7');
+	  {% elif i >= 28 and i < 32 %}
+		row = document.getElementById('row8');
+	  {% elif i >= 32 and i < 36 %}
+		row = document.getElementById('row9');
+	  {% elif i >= 36 and i < 40 %}
+		row = document.getElementById('row10');
+	  {% endif %}
+	  
+	  //create divs
+	  var iDiv = document.createElement('div');
+	  iDiv.className = 'w3-quarter w3-container w3-margin-bottom';
+	  iDiv.id = "div{{ i|string }}";
+	  var iImg = document.createElement('img');
+	  iImg.className = 'w3-hover-opacity';
+	  {% set imgsrc = animeinfo[i]["img"] %}
+	  iImg.src = '{{ imgsrc }}';
+	  iImg.style = 'width:100%';
+	  var iDiv2 = document.createElement('div');
+	  iDiv2.className = 'w3-container w3-white';
+	  var title = document.createElement('a');
+	  {% set titlesrc = animeinfo[i]["mal_id"] %}
+	  title.style="font-size:24px; text-align:center;";
+	  //title.href='';
+	  {% set titletext = animeinfo[i]["title"] %}
+	  title.innerHTML = '{{ titletext }}'.bold();
+	  var predicted = document.createElement('h4');
+	  {% set predictedtext = predicted[i] %}
+	  predicted.innerHTML = 'Predicted rating: {{ predictedtext }}';
+	  predicted.style = "float:left";
+	  var btn = document.createElement('a');
+	  btn.className = "w3-btn w3-white w3-border w3-border-red w3-round-large popup{{ i|string }}_open";
+	  btn.title = "More info";
+	  btn.innerText = "";
+	  btn.style = "float: right;";
+	  glyph = document.createElement("i");
+	  glyph.className = "glyphicon glyphicon-fullscreen";
+	  btn.appendChild(glyph);
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(title);
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(document.createElement("hr"));
+	  iDiv2.appendChild(predicted);
+	  iDiv2.appendChild(btn);
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(document.createElement("hr"));
+	  iDiv.appendChild(iImg);
+	  iDiv.appendChild(iDiv2);
+	  row.appendChild(iDiv);
+	  
+	  //popup 
+	  var pop = document.getElementById("popup{{ i|string }}");
+	  pop.innerHTML = "";
+	  
+	  //img div
+	  var iDiv = document.createElement('div');
+	  iDiv.className = 'w3-container w3-half';
+	  var iImg = document.createElement('img');
+	  {% set imgsrc = animeinfo[i]["img"] %}
+	  iImg.src = '{{ imgsrc }}';
+	  iImg.style = 'width:100%';
+	  iDiv.appendChild(iImg);
+	  
+	  //text div
+	  var iDiv2 = document.createElement('div');
+	  iDiv2.className = 'w3-container w3-half';
+	  iDiv2.style = 'padding-left: 20px';
+	  var title = document.createElement('a');
+	  {% set titlesrc = animeinfo[i]["mal_id"] %}
+	  title.style="font-size:24px;";
+	  title.href = 'https://myanimelist.net/anime/{{ titlesrc }}';
+	  title.target = '_blank';
+	  {% set titletext = animeinfo[i]["title"] %}
+	  title.innerHTML = '{{ titletext }}'.bold();
+	  title.title = 'Visit MAL page for more info';
+	  
+	  var genres = document.createElement('h4');
+	  genres.innerHTML = '<b>Genres:</b>{% for genre in animeinfo[i]["genres"] %}{{ " " + genre.replace("'","") }}{% if not loop.last %},{% endif %}{% endfor %}'
+	  
+	  var malscore = document.createElement('h4');
+	  {% set malscoretext = animeinfo[i]['score'] %}
+	  malscore.innerHTML = '<b>MAL score:</b> {{ malscoretext }}';
+	  
+	  var type = document.createElement('h4');
+	  {% set typetext = animeinfo[i]['type'] %}
+	  type.innerHTML = '<b>Type:</b> {{ typetext }}';
+	  
+	  var episodes = document.createElement('h4');
+	  {% set episodestext = animeinfo[i]['episodes'] %}
+	  episodes.innerHTML = '<b>Episodes:</b> {{ episodestext }}';
+	  
+	  var members = document.createElement('h4');
+	  {% set memberstext = animeinfo[i]['members'] %}
+	  members.innerHTML = '<b>Members</b>: {{ memberstext }}';
+	  
+	  var season = document.createElement('h4');
+	  {% set seasontext = animeinfo[i]['season'] %}
+	  season.innerHTML = '<b>Season:</b> {{ seasontext }}';
+	  
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(title);
+	  iDiv2.appendChild(document.createElement("hr"));
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(genres);
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(malscore);
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(type);
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(episodes);
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(members);
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(season);
+	  iDiv2.appendChild(document.createElement("br"));
+	  
+	  document.getElementById('popup{{ i|string }}').appendChild(iDiv);
+	  document.getElementById('popup{{ i|string }}').appendChild(iDiv2);
+  {% endfor %}
+}
+
+function filtertv() {
+  var allbtn = document.getElementById('all');
+  var tvbtn = document.getElementById('tv');
+  var scorebtn = document.getElementById('score');
+  allbtn.className = "w3-button w3-white";
+  tvbtn.className = "w3-button w3-black";
+  scorebtn.className = "w3-button w3-white";
+  
+  var rows = document.querySelectorAll('[id^="row"]');
+  for (i = 0; i < rows.length; ++i) {
+    rows[i].innerHTML = "";
+  }
+
+  {% for i in range(40) %}
+      $('#popup{{ i|string }}').popup({
+	    pagecontainer: '#portfolio',
+	    color: '#000',
+	    transition: 'all 0.7s'
+	  });
+	  
+      var row;
+	  {% if i >= 0 and i < 4 %}
+		row = document.getElementById('row1');
+	  {% elif i >= 4 and i < 8 %}
+		row = document.getElementById('row2');
+	  {% elif i >= 8 and i < 12 %}
+		row = document.getElementById('row3');
+	  {% elif i >= 12 and i < 16 %}
+		row = document.getElementById('row4');
+	  {% elif i >= 16 and i < 20 %}
+		row = document.getElementById('row5');
+	  {% elif i >= 20 and i < 24 %}
+		row = document.getElementById('row6');
+	  {% elif i >= 24 and i < 28 %}
+		row = document.getElementById('row7');
+	  {% elif i >= 28 and i < 32 %}
+		row = document.getElementById('row8');
+	  {% elif i >= 32 and i < 36 %}
+		row = document.getElementById('row9');
+	  {% elif i >= 36 and i < 40 %}
+		row = document.getElementById('row10');
+	  {% endif %}
+	  
+	  //create divs
+	  var iDiv = document.createElement('div');
+	  iDiv.className = 'w3-quarter w3-container w3-margin-bottom';
+	  iDiv.id = "div{{ i|string }}";
+	  var iImg = document.createElement('img');
+	  iImg.className = 'w3-hover-opacity';
+	  {% set imgsrc = animetvinfo[i]["img"] %}
+	  iImg.src = '{{ imgsrc }}';
+	  iImg.style = 'width:100%';
+	  var iDiv2 = document.createElement('div');
+	  iDiv2.className = 'w3-container w3-white';
+	  var title = document.createElement('a');
+	  {% set titlesrc = animetvinfo[i]["mal_id"] %}
+	  title.style="font-size:24px; text-align:center;";
+	  //title.href='';
+	  {% set titletext = animetvinfo[i]["title"] %}
+	  title.innerHTML = '{{ titletext }}'.bold();
+	  var predicted = document.createElement('h4');
+	  {% set predictedtext = predicted[i] %}
+	  predicted.innerHTML = 'Predicted rating: {{ predictedtext }}';
+	  predicted.style = "float:left";
+	  var btn = document.createElement('a');
+	  btn.className = "w3-btn w3-white w3-border w3-border-red w3-round-large popup{{ i|string }}_open";
+	  btn.title = "More info";
+	  btn.innerText = "";
+	  btn.style = "float: right;";
+	  glyph = document.createElement("i");
+	  glyph.className = "glyphicon glyphicon-fullscreen";
+	  btn.appendChild(glyph);
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(title);
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(document.createElement("hr"));
+	  iDiv2.appendChild(predicted);
+	  iDiv2.appendChild(btn);
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(document.createElement("hr"));
+	  iDiv.appendChild(iImg);
+	  iDiv.appendChild(iDiv2);
+	  row.appendChild(iDiv);
+	  
+	  //popup 
+	  var pop = document.getElementById("popup{{ i|string }}");
+	  pop.innerHTML = ""; 
+	  //img div
+	  var iDiv = document.createElement('div');
+	  iDiv.className = 'w3-container w3-half';
+	  var iImg = document.createElement('img');
+	  {% set imgsrc = animetvinfo[i]["img"] %}
+	  iImg.src = '{{ imgsrc }}';
+	  iImg.style = 'width:100%';
+	  iDiv.appendChild(iImg);
+	  
+	  //text div
+	  var iDiv2 = document.createElement('div');
+	  iDiv2.className = 'w3-container w3-half';
+	  iDiv2.style = 'padding-left: 20px';
+	  var title = document.createElement('a');
+	  {% set titlesrc = animetvinfo[i]["mal_id"] %}
+	  title.style="font-size:24px;";
+	  title.href = 'https://myanimelist.net/anime/{{ titlesrc }}';
+	  title.target = '_blank';
+	  {% set titletext = animetvinfo[i]["title"] %}
+	  title.innerHTML = '{{ titletext }}'.bold();
+	  title.title = 'Visit MAL page for more info';
+	  
+	  var genres = document.createElement('h4');
+	  genres.innerHTML = '<b>Genres:</b>{% for genre in animetvinfo[i]["genres"] %}{{ " " + genre.replace("'","") }}{% if not loop.last %},{% endif %}{% endfor %}'
+	  
+	  var malscore = document.createElement('h4');
+	  {% set malscoretext = animetvinfo[i]['score'] %}
+	  malscore.innerHTML = '<b>MAL score:</b> {{ malscoretext }}';
+	  
+	  var type = document.createElement('h4');
+	  {% set typetext = animetvinfo[i]['type'] %}
+	  type.innerHTML = '<b>Type:</b> {{ typetext }}';
+	  
+	  var episodes = document.createElement('h4');
+	  {% set episodestext = animetvinfo[i]['episodes'] %}
+	  episodes.innerHTML = '<b>Episodes:</b> {{ episodestext }}';
+	  
+	  var members = document.createElement('h4');
+	  {% set memberstext = animetvinfo[i]['members'] %}
+	  members.innerHTML = '<b>Members</b>: {{ memberstext }}';
+	  
+	  var season = document.createElement('h4');
+	  {% set seasontext = animetvinfo[i]['season'] %}
+	  season.innerHTML = '<b>Season:</b> {{ seasontext }}';
+	  
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(title);
+	  iDiv2.appendChild(document.createElement("hr"));
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(genres);
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(malscore);
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(type);
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(episodes);
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(members);
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(season);
+	  iDiv2.appendChild(document.createElement("br"));
+	  
+	  document.getElementById('popup{{ i|string }}').appendChild(iDiv);
+	  document.getElementById('popup{{ i|string }}').appendChild(iDiv2);
+  {% endfor %}
+}
+
+function filterscore() {
+  var allbtn = document.getElementById('all');
+  var tvbtn = document.getElementById('tv');
+  var scorebtn = document.getElementById('score');
+  allbtn.className = "w3-button w3-white";
+  tvbtn.className = "w3-button w3-white";
+  scorebtn.className = "w3-button w3-black";
+  
+  var rows = document.querySelectorAll('[id^="row"]');
+  for (i = 0; i < rows.length; ++i) {
+    rows[i].innerHTML = "";
+  }
+  {% for i in range(40) %}
+      $('#popup{{ i|string }}').popup({
+	    pagecontainer: '#portfolio',
+	    color: '#000',
+	    transition: 'all 0.7s'
+	  });
+	  
+      var row;
+	  {% if i >= 0 and i < 4 %}
+		row = document.getElementById('row1');
+	  {% elif i >= 4 and i < 8 %}
+		row = document.getElementById('row2');
+	  {% elif i >= 8 and i < 12 %}
+		row = document.getElementById('row3');
+	  {% elif i >= 12 and i < 16 %}
+		row = document.getElementById('row4');
+	  {% elif i >= 16 and i < 20 %}
+		row = document.getElementById('row5');
+	  {% elif i >= 20 and i < 24 %}
+		row = document.getElementById('row6');
+	  {% elif i >= 24 and i < 28 %}
+		row = document.getElementById('row7');
+	  {% elif i >= 28 and i < 32 %}
+		row = document.getElementById('row8');
+	  {% elif i >= 32 and i < 36 %}
+		row = document.getElementById('row9');
+	  {% elif i >= 36 and i < 40 %}
+		row = document.getElementById('row10');
+	  {% endif %}
+	  
+	  //create divs
+	  var iDiv = document.createElement('div');
+	  iDiv.className = 'w3-quarter w3-container w3-margin-bottom';
+	  iDiv.id = "div{{ i|string }}";
+	  var iImg = document.createElement('img');
+	  iImg.className = 'w3-hover-opacity';
+	  {% set imgsrc = animescoreinfo[i]["img"] %}
+	  iImg.src = '{{ imgsrc }}';
+	  iImg.style = 'width:100%';
+	  var iDiv2 = document.createElement('div');
+	  iDiv2.className = 'w3-container w3-white';
+	  var title = document.createElement('a');
+	  {% set titlesrc = animescoreinfo[i]["mal_id"] %}
+	  title.style="font-size:24px; text-align:center;";
+	  //title.href='';
+	  {% set titletext = animescoreinfo[i]["title"] %}
+	  title.innerHTML = '{{ titletext }}'.bold();
+	  var predicted = document.createElement('h4');
+	  {% set predictedtext = predicted[i] %}
+	  predicted.innerHTML = 'Predicted rating: {{ predictedtext }}';
+	  predicted.style = "float:left";
+	  var btn = document.createElement('a');
+	  btn.className = "w3-btn w3-white w3-border w3-border-red w3-round-large popup{{ i|string }}_open";
+	  btn.title = "More info";
+	  btn.innerText = "";
+	  btn.style = "float: right;";
+	  glyph = document.createElement("i");
+	  glyph.className = "glyphicon glyphicon-fullscreen";
+	  btn.appendChild(glyph);
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(title);
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(document.createElement("hr"));
+	  iDiv2.appendChild(predicted);
+	  iDiv2.appendChild(btn);
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(document.createElement("hr"));
+	  iDiv.appendChild(iImg);
+	  iDiv.appendChild(iDiv2);
+	  row.appendChild(iDiv);
+	  
+	  //popup 
+	  var pop = document.getElementById("popup{{ i|string }}");
+	  pop.innerHTML = ""; 
+	  //img div
+	  var iDiv = document.createElement('div');
+	  iDiv.className = 'w3-container w3-half';
+	  var iImg = document.createElement('img');
+	  {% set imgsrc = animescoreinfo[i]["img"] %}
+	  iImg.src = '{{ imgsrc }}';
+	  iImg.style = 'width:100%';
+	  iDiv.appendChild(iImg);
+	  
+	  //text div
+	  var iDiv2 = document.createElement('div');
+	  iDiv2.className = 'w3-container w3-half';
+	  iDiv2.style = 'padding-left: 20px';
+	  var title = document.createElement('a');
+	  {% set titlesrc = animescoreinfo[i]["mal_id"] %}
+	  title.style="font-size:24px;";
+	  title.href = 'https://myanimelist.net/anime/{{ titlesrc }}';
+	  title.target = '_blank';
+	  {% set titletext = animescoreinfo[i]["title"] %}
+	  title.innerHTML = '{{ titletext }}'.bold();
+	  title.title = 'Visit MAL page for more info';
+	  
+	  var genres = document.createElement('h4');
+	  genres.innerHTML = '<b>Genres:</b>{% for genre in animescoreinfo[i]["genres"] %}{{ " " + genre.replace("'","") }}{% if not loop.last %},{% endif %}{% endfor %}'
+	  
+	  var malscore = document.createElement('h4');
+	  {% set malscoretext = animescoreinfo[i]['score'] %}
+	  malscore.innerHTML = '<b>MAL score:</b> {{ malscoretext }}';
+	  
+	  var type = document.createElement('h4');
+	  {% set typetext = animescoreinfo[i]['type'] %}
+	  type.innerHTML = '<b>Type:</b> {{ typetext }}';
+	  
+	  var episodes = document.createElement('h4');
+	  {% set episodestext = animescoreinfo[i]['episodes'] %}
+	  episodes.innerHTML = '<b>Episodes:</b> {{ episodestext }}';
+	  
+	  var members = document.createElement('h4');
+	  {% set memberstext = animescoreinfo[i]['members'] %}
+	  members.innerHTML = '<b>Members</b>: {{ memberstext }}';
+	  
+	  var season = document.createElement('h4');
+	  {% set seasontext = animescoreinfo[i]['season'] %}
+	  season.innerHTML = '<b>Season:</b> {{ seasontext }}';
+	  
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(title);
+	  iDiv2.appendChild(document.createElement("hr"));
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(genres);
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(malscore);
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(type);
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(episodes);
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(members);
+	  iDiv2.appendChild(document.createElement("br"));
+	  iDiv2.appendChild(season);
+	  iDiv2.appendChild(document.createElement("br"));
+	  
+	  document.getElementById('popup{{ i|string }}').appendChild(iDiv);
+	  document.getElementById('popup{{ i|string }}').appendChild(iDiv2);
+  {% endfor %}
+}
+</script>
+
+<script>
+$(document).ready(function(){
+  
+  filterall();
+  
+  // Add smooth scrolling to all links
+  $("a").on('click', function(event) {
+
+    // Make sure this.hash has a value before overriding default behavior
+    if (this.hash !== "") {
+      // Prevent default anchor click behavior
+      event.preventDefault();
+
+      // Store hash
+      var hash = this.hash;
+
+      // Using jQuery's animate() method to add smooth page scroll
+      // The optional number (800) specifies the number of milliseconds it takes to scroll to the specified area
+      $('html, body').animate({
+        scrollTop: $(hash).offset().top
+      }, 800, function(){
+   
+        // Add hash (#) to URL when done scrolling (default click behavior)
+        window.location.hash = hash;
+      });
+    } // End if
+  });
+  
+});
+</script>
+	
+<style>
+body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", sans-serif}
+
+.popup_content {
+  margin: 10px 10px;
+  padding: 20px 10px;
+  max-width: 80%;
+  min-width: 30%;
+  border: 2px solid #444;
+  background: white;
+}
+</style>
+
+<body class="w3-red w3-content" style="max-width:1600px">
+ 
+<!-- Sidebar/menu -->
+<nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3;width:270px;" id="mySidebar"><br>
+  <div class="w3-container" style="padding-top: 50px">
+    <a href="#" onclick="w3_close()" class="w3-hide-large w3-right w3-jumbo w3-padding w3-hover-grey" title="close menu">
+      <i class="fa fa-remove"></i>
+    </a>
+	{% if userimg is none %}
+		<img style="position: relative; display: inline-block; left: 40%; transform: translate(-50%); width: 50%" src="{{url_for('static', filename='missingpic.png')}}" style="width:20%;" class="w3-round"/><br><br>
+    {% else %}
+		<img style="position: relative; display: inline-block; left: 40%; transform: translate(-50%); width: 50%" src="{{ userimg }}" style="width:20%;" class="w3-round"/><br><br>
+	{% endif %}
+	<a href="https://myanimelist.net/profile/{{ username }}" style="font-size:24px" target="_blank"><b>{{ username }}</b></a>
+    <h5>MyAnimeList Profile</h5>
+	<br>
+  </div>
+  <div class="w3-bar-block">
+    <a class="w3-bar-item w3-padding w3-text-black"><i class="fa fa-th-large fa-fw w3-margin-right"></i><b> Member Since:</b> {{ userjoined }}</a> 
+	<a class="w3-bar-item w3-padding w3-text-black"><i class="fa fa-th-large fa-fw w3-margin-right"></i><b> Anime completed:</b> {{ userwatched }}</a> 
+	<a class="w3-bar-item w3-padding w3-text-black"><i class="fa fa-th-large fa-fw w3-margin-right"></i><b> Mean rating:</b> {{ usermean }}</a>  
+  </div>
+</nav>
+
+<!-- Overlay effect when opening sidebar on small screens -->
+<div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-main" style="margin-left:300px">
+
+  <!-- Header -->
+  <header id="portfolio">
+    <!--a href="#"><img src="/w3images/avatar_g2.jpg" style="width:65px;" class="w3-circle w3-right w3-margin w3-hide-large w3-hover-opacity"></a-->
+    <span class="w3-button w3-hide-large w3-xxlarge w3-hover-text-grey" onclick="w3_open()"><i class="fa fa-bars"></i></span>
+    <div class="w3-container">
+      <h1><b>Recommended Items for {{ username }}</b></h1>
+	  <div class="w3-section w3-padding-16">
+		<span class="w3-margin-right"><b>FILTER:</b></span> 
+		<button id="all" class="w3-button w3-black" onclick="filterall()"><b>ALL</b></button>
+		<button id="tv" class="w3-button w3-white" onclick="filtertv()"></i><b>TV shows only</b></button>
+		<button id="score" class="w3-button w3-white" onclick="filterscore()"><b>MAL Score > 7.5</b></button>
+	  </div>
+    </div>
+  </header>
+
+  <!-- Row 1-->
+  <div id="row1" class="w3-row-padding">
+  </div>
+  
+  <!-- Row 2-->
+  <div id="row2" class="w3-row-padding">
+  </div>
+  
+  <!-- Row 3-->
+  <div id="row3" class="w3-row-padding">
+  </div>
+  
+  <!-- Row 4-->
+  <div id="row4" class="w3-row-padding">
+  </div>
+  
+  <!-- Row 5-->
+  <div id="row5" class="w3-row-padding">
+  </div>
+  
+  <!-- Row 6-->
+  <div id="row6" class="w3-row-padding">
+  </div>
+  
+  <!-- Row 7-->
+  <div id="row7" class="w3-row-padding">
+  </div>
+  
+  <!-- Row 8-->
+  <div id="row8" class="w3-row-padding">
+  </div>
+  
+  <!-- Row 9-->
+  <div id="row9" class="w3-row-padding">
+  </div>
+  
+  <!-- Row 10-->
+  <div id="row10" class="w3-row-padding">
+  </div>
+
+<!-- End page content -->
+</div>
+
+<script>
+// Script to open and close sidebar
+function w3_open() {
+    document.getElementById("mySidebar").style.display = "block";
+    document.getElementById("myOverlay").style.display = "block";
+}
+ 
+function w3_close() {
+    document.getElementById("mySidebar").style.display = "none";
+    document.getElementById("myOverlay").style.display = "none";
+}
+
+</script>
+
+<div id="popup0" class="w3-white w3-row-padding">
+</div>
+<div id="popup1" class="w3-white w3-row-padding">
+</div>
+<div id="popup2" class="w3-white w3-row-padding">
+</div>
+<div id="popup3" class="w3-white w3-row-padding">
+</div>
+<div id="popup4" class="w3-white w3-row-padding">
+</div>
+<div id="popup5" class="w3-white w3-row-padding">
+</div>
+<div id="popup6" class="w3-white w3-row-padding">
+</div>
+<div id="popup7" class="w3-white w3-row-padding">
+</div>
+<div id="popup8" class="w3-white w3-row-padding">
+</div>
+<div id="popup9" class="w3-white w3-row-padding">
+</div>
+<div id="popup10" class="w3-white w3-row-padding">
+</div>
+<div id="popup11" class="w3-white w3-row-padding">
+</div>
+<div id="popup12" class="w3-white w3-row-padding">
+</div>
+<div id="popup13" class="w3-white w3-row-padding">
+</div>
+<div id="popup14" class="w3-white w3-row-padding">
+</div>
+<div id="popup15" class="w3-white w3-row-padding">
+</div>
+<div id="popup16" class="w3-white w3-row-padding">
+</div>
+<div id="popup17" class="w3-white w3-row-padding">
+</div>
+<div id="popup18" class="w3-white w3-row-padding">
+</div>
+<div id="popup19" class="w3-white w3-row-padding">
+</div>
+<div id="popup20" class="w3-white w3-row-padding">
+</div>
+<div id="popup21" class="w3-white w3-row-padding">
+</div>
+<div id="popup22" class="w3-white w3-row-padding">
+</div>
+<div id="popup23" class="w3-white w3-row-padding">
+</div>
+<div id="popup24" class="w3-white w3-row-padding">
+</div>
+<div id="popup25" class="w3-white w3-row-padding">
+</div>
+<div id="popup26" class="w3-white w3-row-padding">
+</div>
+<div id="popup27" class="w3-white w3-row-padding">
+</div>
+<div id="popup28" class="w3-white w3-row-padding">
+</div>
+<div id="popup29" class="w3-white w3-row-padding">
+</div>
+<div id="popup30" class="w3-white w3-row-padding">
+</div>
+<div id="popup31" class="w3-white w3-row-padding">
+</div>
+<div id="popup32" class="w3-white w3-row-padding">
+</div>
+<div id="popup33" class="w3-white w3-row-padding">
+</div>
+<div id="popup34" class="w3-white w3-row-padding">
+</div>
+<div id="popup35" class="w3-white w3-row-padding">
+</div>
+<div id="popup36" class="w3-white w3-row-padding">
+</div>
+<div id="popup37" class="w3-white w3-row-padding">
+</div>
+<div id="popup38" class="w3-white w3-row-padding">
+</div>
+<div id="popup39" class="w3-white w3-row-padding">
+</div>
+</body>
+</html>

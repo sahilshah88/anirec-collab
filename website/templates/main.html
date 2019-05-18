@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<title>User Anime Recommendations</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<script>
+$(document).ready(function(){
+  var form = document.getElementById('form');
+  form.addEventListener('submit', logSubmit);
+  // Add smooth scrolling to all links
+  $("a").on('click', function(event) {
+
+    // Make sure this.hash has a value before overriding default behavior
+    if (this.hash !== "") {
+      // Prevent default anchor click behavior
+      event.preventDefault();
+
+      // Store hash
+      var hash = this.hash;
+
+      // Using jQuery's animate() method to add smooth page scroll
+      // The optional number (800) specifies the number of milliseconds it takes to scroll to the specified area
+      $('html, body').animate({
+        scrollTop: $(hash).offset().top
+      }, 800, function(){
+   
+        // Add hash (#) to URL when done scrolling (default click behavior)
+        window.location.hash = hash;
+      });
+    } // End if
+  });
+});
+</script>
+
+<script>
+function logSubmit(event) {
+   document.getElementById('loading').style.visibility = "visible";
+}
+</script>
+
+<style>
+body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", sans-serif}
+</style>
+
+<style>
+.loader {
+  border: 4px solid #f3f3f3; /* Light grey */
+  border-top: 4px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 2s linear infinite;
+  margin-top: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
+
+<body class="w3-red w3-content" style="max-width:1600px">
+
+<!-- Sidebar/menu -->
+<nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3;width:270px;" id="mySidebar"><br>
+  <div class="w3-container">
+    <a href="#" onclick="w3_close()" class="w3-hide-large w3-right w3-jumbo w3-padding w3-hover-grey" title="close menu">
+      <i class="fa fa-remove"></i>
+    </a>
+    <img style="position: relative; display: inline-block; left: 50%; transform: translate(-50%);" src="{{url_for('static', filename='logo.png')}}" style="width:20%;" class="w3-round"/><br><br>
+    <h4><b>Anime Recommender</b></h4>
+    <h5>Developed by Sahil Shah</h5>
+	<br>
+  </div>
+  <div class="w3-bar-block">
+    <a href="#recommend" onclick="w3_close()" class="w3-bar-item w3-button w3-padding"><i class="fa fa-th-large fa-fw w3-margin-right"></i>RECOMMEND</a> 
+    <a href="#about" onclick="w3_close()" class="w3-bar-item w3-button w3-padding"><i class="fa fa-user fa-fw w3-margin-right"></i>HOW IT WORKS</a> 
+    <a href="#contact" onclick="w3_close()" class="w3-bar-item w3-button w3-padding"><i class="fa fa-envelope fa-fw w3-margin-right"></i>CONTACT</a>
+  </div>
+</nav>
+
+<!-- Overlay effect when opening sidebar on small screens -->
+<div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-main" style="margin-left:300px">
+
+  <!-- Header -->
+  <header id="recommend" class="w3-container w3-center w3-red" style="padding:48px 16px">
+    <h1 class="w3-margin w3-jumbo w3-animate-down">ANIME RECOMMENDER</h1>
+    <p class="w3-xlarge">Get anime recommendations based on your MyAnimeList profile!</p>
+	<br><br><br>
+    <div class="w3-container w3-third">
+    </div>
+    <div class="w3-container w3-third">
+      <form id="form" class="w3-container" method="POST">
+	    <div class="input-group">
+          <div class="input-group-btn">
+            <button style="pointer-events:none" class="btn btn-default input-lg">
+              <i class="glyphicon glyphicon-user"></i>
+            </button>
+          </div>
+          <input id="username" type="text" class="form-control input-lg" name="username" placeholder="Username">
+		  <div class="input-group-btn">
+            <button style="width:150%" class="btn btn-default input-lg" type="submit">
+              <i class="glyphicon glyphicon-search"></i>
+            </button>
+          </div>
+        </div>
+	  </form>
+	  <br>
+	  <div id = "loading" style="width: 100%; display:table; visibility:hidden;">
+		  <div id="msg" class="w3-container" style="display: table-cell;">
+			<h4>Retrieving user data and making recommendations. Please wait...</h4>
+		  </div>
+		  <div id="wheel" class="loader"></div>
+	  </div>
+    </div>
+  </header>
+  
+
+  <div id="about" class="w3-container w3-padding-large" style="margin-bottom:32px">
+	<hr>
+	<br>
+    <h2><b>HOW IT WORKS</b></h2>
+	<br>
+	<h3 style="LINE-HEIGHT:30px;">To get started, simply enter your MAL username above (at least 5 scored anime is required). This will add your ratings to our database and allow us to compute similarities and predicted ratings (this may take some time).<h3>
+    <h3 style="LINE-HEIGHT:30px;">We use a user-user collaborative filtering recommendation system to determine the most likely candidates for shows you will like. This system works by computing similarities between your existing MyAnimeList ratings and the ratings of other users. By combining the ratings of similar users, we can make decent predictions for shows you may also enjoy. We used a database of over 40,000 users and 8,000,000 ratings from public MyAnimeList profiles to implement this algorithm.  </h3>
+    <br><br><br>
+	<img style="position: relative; display: inline-block; left: 50%; transform: translate(-50%);" src="{{url_for('static', filename='collabfinal.png')}}" style="width:20%;"/><br><br>
+	<hr>
+    
+   <!-- Contact Section -->
+  <div class="w3-container w3-padding-large" id="contact">
+    <h2><b>CONTACT ME</b></h2>
+	<br>
+	<h3>Have questions, issues or concerns? Let me know!</h3>
+	<br>
+    <div class="w3-section">
+	  <h3><i class="fa fa-envelope fa-fw w3-text-white w3-xxlarge w3-margin-right"> </i> Email: sshah88@jhu.edu</h3>
+      <h3><i class="fa fa-map-marker fa-fw w3-text-white w3-xxlarge w3-margin-right"></i> Baltimore, MD</h3>
+    </div><br>
+  <!-- End Contact Section -->
+  </div>
+
+<!-- End page content -->
+</div>
+
+<script>
+// Script to open and close sidebar
+function w3_open() {
+    document.getElementById("mySidebar").style.display = "block";
+    document.getElementById("myOverlay").style.display = "block";
+}
+ 
+function w3_close() {
+    document.getElementById("mySidebar").style.display = "none";
+    document.getElementById("myOverlay").style.display = "none";
+}
+
+</script>
+
+</body>
+</html>
